@@ -14,14 +14,14 @@ namespace ii {
 class ThreadIn final {
 
 public:
-	ThreadIn(__int64 threadStartAddress) : m_currentProcessId(GetCurrentProcessId()), m_thread([this]() { ForwardLoop(); }) {}
+	ThreadIn(__int64 threadStartAddress) : m_currentProcessId(GetCurrentProcessId()), m_thread([this]() { ViciousCircle(); }) {}
 
-	ThreadIn(__int64 threadStartAddress, __int64 forwardAddress) : m_currentProcessId(GetCurrentProcessId()), m_thread([this]() { ForwardLoop(); }) {}
+	ThreadIn(__int64 threadStartAddress, __int64 forwardAddress) : m_currentProcessId(GetCurrentProcessId()), m_thread([this]() { ViciousCircle(); }) {}
 
 	ThreadIn(__int32 processId, __int64 threadStartAddress, __int64 forwardAddress)
-		: m_currentProcessId(processId), m_thread([this]() { ForwardLoop(); }) {}
+		: m_currentProcessId(processId), m_thread([this]() { ViciousCircle(); }) {}
 
-	ThreadIn(__int32 processId, __int64 threadStartAddress) : m_currentProcessId(processId), m_thread([this]() { ForwardLoop(); }) {}
+	ThreadIn(__int32 processId, __int64 threadStartAddress) : m_currentProcessId(processId), m_thread([this]() { ViciousCircle(); }) {}
 
 private:
 	__int32 m_currentProcessId = 0;
@@ -36,9 +36,9 @@ private:
 
 	typedef DWORD(__stdcall* f_NtQueryInformationThread)(HANDLE, THREADINFOCLASS, void*, ULONG_PTR, ULONG_PTR*);
 
-	void ForwardLoop() {
+	void ViciousCircle() {
 		for (;;)
-			Freeze(m_threadStartAddress, m_forwardAddress);
+			FreezeOrForwardTargetThread(m_threadStartAddress, m_forwardAddress);
 	}
 
 	ULONG_PTR GetThreadStartAddress(HANDLE hThread) {
@@ -56,7 +56,7 @@ private:
 		return ulStartAddress;
 	}
 
-	void Freeze(__int64 tSA, __int64 forwardAddress) {
+	void FreezeOrForwardTargetThread(__int64 tSA, __int64 forwardAddress) {
 
 		HANDLE hThreadSnap = INVALID_HANDLE_VALUE;
 		THREADENTRY32 te32;
