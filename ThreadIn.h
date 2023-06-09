@@ -24,11 +24,11 @@ public:
 			  }
 		  }) {}
 
-	ThreadIn(__int64 pid, __int64 threadStartAddress)
-		: m_currentProcessId(pid), m_thread([this, threadStartAddress]() { Freeze(threadStartAddress, 0); }) {}
+	ThreadIn(__int64 processId, __int64 threadStartAddress)
+		: m_currentProcessId(processId), m_thread([this, threadStartAddress]() { Freeze(threadStartAddress, 0); }) {}
 
-	ThreadIn(__int64 pid, __int64 threadStartAddress, __int64 forwardAddress)
-		: m_currentProcessId(pid), m_thread([this, threadStartAddress, forwardAddress]() {
+	ThreadIn(__int64 processId, __int64 threadStartAddress, __int64 forwardAddress)
+		: m_currentProcessId(processId), m_thread([this, threadStartAddress, forwardAddress]() {
 			  while (true) {
 				  Freeze(threadStartAddress, forwardAddress);
 			  }
