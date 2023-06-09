@@ -9,4 +9,4 @@ WaitMessage ( https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-win
 ```
 Yields control to other threads when a thread has no other messages in its message queue. The WaitMessage function suspends the thread and does not return until a new message is placed in the thread's message queue.
 ```
-![Thread stack]([http://url/to/img.png](https://github.com/illegal-instruction-co/ThreadIn/blob/main/thread%20stack.png?raw=true))
+![Thread stack]([http://url/to/img.png]([https://github.com/illegal-instruction-co/ThreadIn/blob/main/thread%20stack.png?raw=true](https://i.ibb.co/Qfs1C8X/thread-stack.png)))
