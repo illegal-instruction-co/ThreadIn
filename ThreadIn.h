@@ -14,28 +14,19 @@ namespace ii {
 class ThreadIn final {
 
 public:
-	ThreadIn(__int64 threadStartAddress)
-		: m_currentProcessId(GetCurrentProcessId()), m_thread([this, threadStartAddress]() { Freeze(threadStartAddress, 0); }) {}
+	ThreadIn(__int64 threadStartAddress) : m_currentProcessId(GetCurrentProcessId()), m_thread([this]() { ForwardLoop(); }) {}
 
-	ThreadIn(__int64 threadStartAddress, __int64 forwardAddress)
-		: m_currentProcessId(GetCurrentProcessId()), m_thread([this, threadStartAddress, forwardAddress]() {
-			  while (true) {
-				  Freeze(threadStartAddress, forwardAddress);
-			  }
-		  }) {}
+	ThreadIn(__int64 threadStartAddress, __int64 forwardAddress) : m_currentProcessId(GetCurrentProcessId()), m_thread([this]() { ForwardLoop(); }) {}
 
-	ThreadIn(__int64 processId, __int64 threadStartAddress)
-		: m_currentProcessId(processId), m_thread([this, threadStartAddress]() { Freeze(threadStartAddress, 0); }) {}
+	ThreadIn(__int32 processId, __int64 threadStartAddress, __int64 forwardAddress)
+		: m_currentProcessId(processId), m_thread([this]() { ForwardLoop(); }) {}
 
-	ThreadIn(__int64 processId, __int64 threadStartAddress, __int64 forwardAddress)
-		: m_currentProcessId(processId), m_thread([this, threadStartAddress, forwardAddress]() {
-			  while (true) {
-				  Freeze(threadStartAddress, forwardAddress);
-			  }
-		  }) {}
+	ThreadIn(__int32 processId, __int64 threadStartAddress) : m_currentProcessId(processId), m_thread([this]() { ForwardLoop(); }) {}
 
 private:
-	__int64 m_currentProcessId;
+	__int32 m_currentProcessId = 0;
+	__int64 m_threadStartAddress = 0;
+	__int64 m_forwardAddress = 0;
 
 	std::jthread m_thread;
 
@@ -44,6 +35,11 @@ private:
 	};
 
 	typedef DWORD(__stdcall* f_NtQueryInformationThread)(HANDLE, THREADINFOCLASS, void*, ULONG_PTR, ULONG_PTR*);
+
+	void ForwardLoop() {
+		for (;;)
+			Freeze(m_threadStartAddress, m_forwardAddress);
+	}
 
 	ULONG_PTR GetThreadStartAddress(HANDLE hThread) {
 		auto NtQueryInformationThread =
