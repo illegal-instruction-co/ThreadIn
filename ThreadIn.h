@@ -7,8 +7,9 @@
 #endif
 
 #include <thread>
-#include <Windows.h>
+
 #include <TlHelp32.h>
+#include <Windows.h>
 
 namespace ii {
 class ThreadIn final {
