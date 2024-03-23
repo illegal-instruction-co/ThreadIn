@@ -15,6 +15,7 @@ namespace ii {
 class ThreadIn final {
 
 public:
+
 	explicit ThreadIn(__int64 threadStartAddress) : m_currentProcessId(GetCurrentProcessId()), m_thread([this]() { ViciousCircle(); }) {}
 
 	ThreadIn(__int64 threadStartAddress, __int64 forwardAddress) : m_currentProcessId(GetCurrentProcessId()), m_thread([this]() { ViciousCircle(); }) {}
@@ -36,13 +37,13 @@ private:
 	};
 
 	typedef DWORD(__stdcall* f_NtQueryInformationThread)(HANDLE, THREADINFOCLASS, void*, ULONG_PTR, ULONG_PTR*);
-
+	
 	inline void ViciousCircle() {
 		for (;;)
 			FreezeOrForwardTargetThread(m_threadStartAddress, m_forwardAddress);
 	}
 
-	[[nodiscard]] ULONG_PTR GetThreadStartAddress(HANDLE hThread) {
+	[[nodiscard]] static ULONG_PTR GetThreadStartAddress(HANDLE hThread) {
 		auto NtQueryInformationThread =
 			reinterpret_cast<f_NtQueryInformationThread>(GetProcAddress(GetModuleHandleA("ntdll.dll"), "NtQueryInformationThread"));
 		if (!NtQueryInformationThread)
